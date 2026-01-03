@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "current_map": "temp_random.txt",
+  "timestamp": "2026-01-01T22:39:40.731484",
+  "game_state": {
+    "explorer_position": [
+      7,
+      11
+    ],
+    "explorer_direction": "RIGHT",
+    "gate": {
+      "gate_position": [
+        10,
+        5
+      ],
+      "isClosed": false,
+      "cellIndex": 7
+    },
+    "mummy_white_positions": [
+      [
+        3,
+        11
+      ]
+    ],
+    "mummy_red_positions": [],
+    "scorpion_white_positions": [],
+    "scorpion_red_positions": [],
+    "history": [
+      {
+        "exp_pos": [
+          5,
+          7
+        ],
+        "mw_pos": [
+          [
+            1,
+            1
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            10,
+            5
+          ],
+          "isClosed": true,
+          "cellIndex": 0
+        }
+      },
+      {
+        "exp_pos": [
+          5,
+          9
+        ],
+        "mw_pos": [
+          [
+            1,
+            5
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            10,
+            5
+          ],
+          "isClosed": true,
+          "cellIndex": 0
+        }
+      },
+      {
+        "exp_pos": [
+          7,
+          9
+        ],
+        "mw_pos": [
+          [
+            3,
+            7
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            10,
+            5
+          ],
+          "isClosed": false,
+          "cellIndex": 7
+        }
+      }
+    ]
+  }
+}

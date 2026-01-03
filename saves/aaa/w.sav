@@ -1,0 +1,123 @@
+{
+  "version": "1.0",
+  "current_map": "temp_random.txt",
+  "timestamp": "2026-01-02T21:01:49.195388",
+  "game_state": {
+    "explorer_position": [
+      9,
+      5
+    ],
+    "explorer_direction": "RIGHT",
+    "gate": {
+      "gate_position": [
+        13,
+        8
+      ],
+      "isClosed": true,
+      "cellIndex": 0
+    },
+    "mummy_white_positions": [
+      [
+        5,
+        11
+      ]
+    ],
+    "mummy_red_positions": [],
+    "scorpion_white_positions": [],
+    "scorpion_red_positions": [],
+    "history": [
+      {
+        "exp_pos": [
+          9,
+          5
+        ],
+        "mw_pos": [
+          [
+            5,
+            15
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            13,
+            8
+          ],
+          "isClosed": true,
+          "cellIndex": 0
+        }
+      },
+      {
+        "exp_pos": [
+          9,
+          7
+        ],
+        "mw_pos": [
+          [
+            5,
+            11
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            13,
+            8
+          ],
+          "isClosed": true,
+          "cellIndex": 0
+        }
+      },
+      {
+        "exp_pos": [
+          11,
+          7
+        ],
+        "mw_pos": [
+          [
+            5,
+            11
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            13,
+            8
+          ],
+          "isClosed": true,
+          "cellIndex": 0
+        }
+      },
+      {
+        "exp_pos": [
+          9,
+          7
+        ],
+        "mw_pos": [
+          [
+            5,
+            11
+          ]
+        ],
+        "mr_pos": [],
+        "sw_pos": [],
+        "sr_pos": [],
+        "gate": {
+          "gate_position": [
+            13,
+            8
+          ],
+          "isClosed": true,
+          "cellIndex": 0
+        }
+      }
+    ]
+  }
+}
