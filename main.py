@@ -1429,6 +1429,7 @@ def update_enemy_position(render, game, backdrop, floor, stair, trap, key, gate,
     return False
 
 def run_ai_solver(game, assets):
+    switch_music("Gametheme.mp3")
     print("AI SOLVING WITH DIJKSTRA...")
     (backdrop, floor, wall, key, gate_img, trap, stair, exp_s, mw_s, mr_s, sw_s, sr_s) = assets
     exp = characters.Explorer(game.explorer_position[0], game.explorer_position[1])
@@ -1473,17 +1474,75 @@ def run_ai_solver(game, assets):
     
     return True
 
+# IN MAP TRÊN CONSOLE
+def print_map(game_obj, ex_char, mw_objs, mr_objs):
+    try:
+        # 1. Lấy tọa độ Explorer (Object hoặc Dict)
+        if hasattr(ex_char, 'x'):
+            ex_pos = (ex_char.x, ex_char.y)
+        else:
+            ex_pos = (ex_char['x'], ex_char['y'])
+        
+        # 2. Lấy tọa độ Mummy TRỰC TIẾP từ Object ( mw_objs chính là mummy_white_character )
+        mw_coords = [(m.x, m.y) for m in mw_objs if m is not None]
+        mr_coords = [(r.x, r.y) for r in mr_objs if r is not None]
+
+        print("\n" + "==="*15)
+        for i in range(len(game_obj.maze)):
+            row = ""
+            for j in range(len(game_obj.maze[i])):
+                p = (i, j)
+                if p == ex_pos:
+                    row += "E "
+                elif p in mw_coords:
+                    row += "W "
+                elif p in mr_coords:
+                    row += "R "
+                elif game_obj.gate and i == game_obj.gate[0] and j == game_obj.gate[1]:
+                    row += "S "
+                else:
+                    char = game_obj.maze[i][j]
+                    row += (str(char) if char else " ") + " "
+            
+            # Print row và check điều kiện của ông
+            print(row)
+            if "W" in row:
+                # Dòng này chắc chắn sẽ chạy nếu Object Mummy còn sống
+                pass 
+                
+        # 2. PHẦN CHÚ THÍCH VÀ ĐỊA CHỈ (TỌA ĐỘ)
+        print("-" * 30)
+        print("📜 CHÚ THÍCH KÍ HIỆU & VỊ TRÍ HIỆN TẠI:")
+        print(f"  [E] Explorer (Người chơi)   -> Địa chỉ: {ex_pos}")
+        
+        if mw_coords:
+            print(f"  [W] White Mummy (Xác ướp trắng) -> Địa chỉ: {mw_coords}")
+        
+        if mr_coords:
+            print(f"  [R] Red Mummy (Xác ướp đỏ)     -> Địa chỉ: {mr_coords}")
+
+        if game_obj.gate:
+            print(f"  [S] Exit (Cửa thoát hiểm) ")
+        print(f"  [H] White Scorpion (Bọ cạp)   ")
+        print(f"  [D] Red Scorpion (Bọ cạp đỏ)  ")
+        print("  [%] Wall (Tường đá) | [ ] Empty (Đường trống)")
+        print("==="*15 + "\n")
+
+    except Exception as e:
+        print(f"Lỗi in map: {e}")
+#
 def rungame(layout, auth_manager=None, load_data=None):
     current_map = layout
     render = True
-    
     # If loading from save, use saved map
     if load_data:
         current_map = load_data.get('current_map', layout)
-
     while True:
         game = GameState(current_map)
         game.show_information()
+        # Print the map to console when the game (or level) is initialized
+        
+        #
         path_tuple = load_image_path(game.maze_size)
         raw_backdrop = pygame.image.load(path_tuple[0])
         # Ép ảnh nền về đúng kích thước chuẩn của game (494x480)
@@ -1514,11 +1573,17 @@ def rungame(layout, auth_manager=None, load_data=None):
         pygame.display.flip()
 
         explorer_character = characters.Explorer(game.explorer_position[0], game.explorer_position[1])
+        #
+        explorer_character.walk_sound = exp_walk_sound
+        #
         mummy_white_character = [characters.mummy_white(p[0], p[1]) for p in game.mummy_white_position]
         mummy_red_character = [characters.mummy_red(p[0], p[1]) for p in game.mummy_red_position]
         scorpion_white_character = [characters.scorpion_white(p[0], p[1]) for p in game.scorpion_white_position]
         scorpion_red_character = [characters.scorpion_red(p[0], p[1]) for p in game.scorpion_red_position]
-        
+        #
+        print("\n" + "!"*15 + " GAME START " + "!"*15)
+        print_map(game, explorer_character, mummy_white_character, mummy_red_character, )
+        #
         # Initialize navigation bar
         nav_bar = NavigationBar(GAME_W)
         set_nav_bar(nav_bar)  # Set it globally so it's drawn on every frame
@@ -1565,6 +1630,8 @@ def rungame(layout, auth_manager=None, load_data=None):
         
         while loop_running:
             if isEnd:
+                switch_music("pummel.wav")
+                pygame.mixer.music.play(0)
                 btn_try, btn_sol = game_over_popup()
                 pygame.display.flip()
                 waiting = True
@@ -1573,16 +1640,19 @@ def rungame(layout, auth_manager=None, load_data=None):
                         if event.type == pygame.QUIT: pygame.quit(); sys.exit()
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             mx, my = get_mouse_pos()
-                            if btn_try.collidepoint((mx, my)): waiting=False; loop_running=False 
+                            if btn_try.collidepoint((mx, my)): switch_music("Gametheme.mp3"); waiting=False; loop_running=False 
                             elif btn_sol.collidepoint((mx, my)):
                                 waiting=False
                                 if run_ai_solver(game, assets):
+                                    switch_music("Gametheme.mp3")
                                     isWin = True
                                     isEnd = False
                                     waiting = False
                 continue
             
             if isWin:
+                switch_music("Complete.mp3") # Switch to win music
+                pygame.mixer.music.play(0)
                 b_again, b_home, b_next = game_win_popup()
                 pygame.display.flip()
                 waiting = True
@@ -1591,12 +1661,14 @@ def rungame(layout, auth_manager=None, load_data=None):
                         if event.type == pygame.QUIT: pygame.quit(); sys.exit()
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             mx, my = get_mouse_pos()
-                            if b_again.collidepoint((mx, my)): waiting=False; loop_running=False
-                            elif b_home.collidepoint((mx, my)): clear_nav_bar(); return
+                            if b_again.collidepoint((mx, my)): switch_music("Gametheme.mp3"); waiting=False; loop_running=False
+                            elif b_home.collidepoint((mx, my)): switch_music("Main.mp3"); clear_nav_bar(); return
                             elif b_next.collidepoint((mx, my)):
                                 next_map = get_next_map(current_map)
-                                if next_map: current_map = next_map; waiting=False; loop_running=False
-                                else: clear_nav_bar(); return
+                                if next_map: switch_music("Gametheme.mp3");current_map = next_map; waiting=False; loop_running=False
+                                else:
+                                    switch_music("Main.mp3")
+                                    clear_nav_bar(); return
                 continue
 
                 continue
@@ -1619,7 +1691,9 @@ def rungame(layout, auth_manager=None, load_data=None):
                         if button_clicked == "save":
                             if auth_manager and auth_manager.is_logged_in():
                                 save_result = save_game_menu(auth_manager, game, explorer_character, mummy_white_character, mummy_red_character, scorpion_white_character, scorpion_red_character, current_map)
-                                if save_result: clear_nav_bar(); return
+                                if save_result: 
+                                    switch_music("Main.mp3")
+                                    clear_nav_bar(); return
                                 graphics.draw_screen(canvas, game.maze, backdrop, floor, game.maze_size, game.cell_rect, stair, game.stair_position, trap, game.trap_position, key, game.key_position, gate, game.gate, wall, explorer, list_mummy_white, list_mummy_red, list_scorpion_white, list_scorpion_red)
                                 pygame.display.flip()
                         elif button_clicked == "undo":
@@ -1642,6 +1716,7 @@ def rungame(layout, auth_manager=None, load_data=None):
                                 graphics.draw_screen(canvas, game.maze, backdrop, floor, game.maze_size, game.cell_rect, stair, game.stair_position, trap, game.trap_position, key, game.key_position, gate, game.gate, wall, explorer, list_mummy_white, list_mummy_red, list_scorpion_white, list_scorpion_red)
                                 pygame.display.flip()
                         elif button_clicked == "exit":
+                            switch_music("Main.mp3")
                             clear_nav_bar(); return
 
                     # B. Nếu click vào Bản đồ (DI CHUYỂN NHÂN VẬT)
@@ -1678,6 +1753,14 @@ def rungame(layout, auth_manager=None, load_data=None):
                             isEnd = update_enemy_position(render, game, backdrop, floor, stair, trap, key, gate, wall, explorer,
                                                 explorer_character, mummy_white_character, mummy_red_character, scorpion_white_character, scorpion_red_character,
                                                 list_mummy_white, list_mummy_red, list_scorpion_white, list_scorpion_red)
+                            # THÊM DÒNG NÀY ĐỂ FIX LỖI NONE TRƯỚC KHI IN
+                           # SỬA LẠI THAM SỐ TRUYỀN VÀO:
+                            print_map(
+                                game, 
+                                explorer_character, 
+                                mummy_white_character, # Truyền cái này (Object)
+                                mummy_red_character,   # Truyền cái này (Object)
+                            )
 
                 # 2. XỬ LÝ BÀN PHÍM
                 if event.type == pygame.KEYDOWN:
@@ -1744,15 +1827,52 @@ def rungame(layout, auth_manager=None, load_data=None):
                         isEnd = update_enemy_position(render, game, backdrop, floor, stair, trap, key, gate, wall, explorer,
                                               explorer_character, mummy_white_character, mummy_red_character, scorpion_white_character, scorpion_red_character,
                                               list_mummy_white, list_mummy_red, list_scorpion_white, list_scorpion_red)
+                        # THÊM DÒNG NÀY ĐỂ FIX LỖI NONE TRƯỚC KHI IN
+                        list_mummy_white = [m for m in list_mummy_white if m is not None]
+                        list_mummy_red = [r for r in list_mummy_red if r is not None]
+                        # 4. GỌI HÀM IN NGAY TẠI ĐÂY - Sau khi tất cả đã move xong
+                        # SỬA LẠI THAM SỐ TRUYỀN VÀO:
+                        print_map(
+                            game, 
+                            explorer_character, 
+                            mummy_white_character, # Truyền cái này (Object)
+                            mummy_red_character,   # Truyền cái này (Object)
+                        )
             
             # Update mouse position for nav bar (display hook will draw it)
             get_mouse_pos()
             pygame.display.flip()
 
+
 if __name__ == '__main__':
+    #
     init_display()
     auth_manager = None
+    # --- KHỞI TẠO MIXER MỘT LẦN DUY NHẤT ---
+    pygame.mixer.pre_init(44100, -16, 2, 512)
+    pygame.mixer.init()
     
+    s_dir = os.path.join(project_path, "sound")
+
+    exp_walk_sound = pygame.mixer.Sound(os.path.join(s_dir, "expwalk.wav"))
+    exp_walk_sound.set_volume(0.4)
+    # Hàm phụ để đổi nhạc không bao giờ lỗi
+    def switch_music(file_name):
+        try:
+            full_path = os.path.join(s_dir, file_name)
+            if os.path.exists(full_path):
+                pygame.mixer.music.stop()
+                pygame.mixer.music.unload() # Ép nhả file cũ
+                pygame.mixer.music.load(full_path)
+                pygame.mixer.music.set_volume(0.15)
+                pygame.mixer.music.play(-1)
+        except Exception as e:
+            print(f"Lỗi đổi nhạc: {e}")
+
+    # Bật nhạc Menu lúc vừa mở game
+    switch_music("Main.mp3")
+    current_state = "MENU"
+    #
     while True:
         # Show login menu first (can skip)
         try:
@@ -1772,7 +1892,7 @@ if __name__ == '__main__':
         
         while True:
             choice, auth_manager = main_menu(auth_manager)
-            
+            switch_music("Main.mp3")
             if choice == "login":
                 # User clicked logout, go back to login
                 break
@@ -1841,6 +1961,8 @@ if __name__ == '__main__':
                 print(f"Starting map: {layout}")
                 if load_data:
                     print(f"Loading saved game state...")
+                # TRƯỚC KHI VÀO TRẬN: Đổi nhạc Game
+                switch_music("Gametheme.mp3")
                 try: 
                     rungame(layout, auth_manager, load_data)
                 except Exception as e: 

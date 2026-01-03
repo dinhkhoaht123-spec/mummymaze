@@ -1,11 +1,11 @@
 {
   "version": "1.0",
   "current_map": "temp_random.txt",
-  "timestamp": "2026-01-03T10:10:54.942859",
+  "timestamp": "2026-01-03T11:23:30.563113",
   "game_state": {
     "explorer_position": [
       11,
-      11
+      9
     ],
     "explorer_direction": "RIGHT",
     "gate": {
@@ -18,37 +18,13 @@
     },
     "mummy_white_positions": [
       [
-        13,
-        13
+        15,
+        15
       ]
     ],
     "mummy_red_positions": [],
     "scorpion_white_positions": [],
     "scorpion_red_positions": [],
-    "history": [
-      {
-        "exp_pos": [
-          11,
-          9
-        ],
-        "mw_pos": [
-          [
-            15,
-            15
-          ]
-        ],
-        "mr_pos": [],
-        "sw_pos": [],
-        "sr_pos": [],
-        "gate": {
-          "gate_position": [
-            14,
-            13
-          ],
-          "isClosed": true,
-          "cellIndex": 0
-        }
-      }
-    ]
+    "history": []
   }
 }

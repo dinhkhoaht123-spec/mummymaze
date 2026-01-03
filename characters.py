@@ -1,6 +1,7 @@
-
+import os
 import graphics
 import pygame
+
 
 class character:
     def __init__(self, x, y):
@@ -72,8 +73,15 @@ class character:
         return self.y
 
 class Explorer(character):
+    exp_walk_sound = None
     def move_animation(self, x, y, screen, game, backdrop, floor, stair, stair_position, trap, trap_position,
                 key, key_position, gate_sheet, gate, wall, explorer, mummy_white, mummy_red, scorpion_white, scorpion_red):
+
+        if Explorer.exp_walk_sound is None:
+            sound_path = os.path.join("sound", "expwalk.wav")
+            Explorer.exp_walk_sound = pygame.mixer.Sound(sound_path)
+            Explorer.exp_walk_sound.set_volume(0.4)
+ 
         explorer_start_x = game.coordinate_screen_x + game.cell_rect * (self.y // 2)
         explorer_start_y = game.coordinate_screen_y + game.cell_rect * (self.x // 2)
         if game.maze[x - 1][y] == "%" or game.maze[x - 1][y] == "G":
@@ -82,6 +90,10 @@ class Explorer(character):
         step_stride = game.cell_rect // 5
         coordinates = list(explorer["coordinates"])
         for i in range(6):
+            if i == 0:
+                if not pygame.mixer.Channel(0).get_busy():
+                    pygame.mixer.Channel(0).play(Explorer.exp_walk_sound)
+                    
             if i < 5:
                 if explorer["direction"] == "UP":
                     coordinates[1] -= step_stride

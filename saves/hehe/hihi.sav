@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "current_map": "temp_random.txt",
+  "timestamp": "2026-01-03T12:41:06.031910",
+  "game_state": {
+    "explorer_position": [
+      11,
+      9
+    ],
+    "explorer_direction": "RIGHT",
+    "gate": {
+      "gate_position": [
+        14,
+        13
+      ],
+      "isClosed": true,
+      "cellIndex": 0
+    },
+    "mummy_white_positions": [
+      [
+        15,
+        15
+      ]
+    ],
+    "mummy_red_positions": [],
+    "scorpion_white_positions": [],
+    "scorpion_red_positions": [],
+    "history": []
+  }
+}
