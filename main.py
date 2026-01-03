@@ -1504,10 +1504,8 @@ def print_map(game_obj, ex_char, mw_objs, mr_objs):
                     char = game_obj.maze[i][j]
                     row += (str(char) if char else " ") + " "
             
-            # Print row và check điều kiện của ông
             print(row)
             if "W" in row:
-                # Dòng này chắc chắn sẽ chạy nếu Object Mummy còn sống
                 pass 
                 
         # 2. PHẦN CHÚ THÍCH VÀ ĐỊA CHỈ (TỌA ĐỘ)
