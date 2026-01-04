@@ -271,7 +271,7 @@ def gate_animation(screen, game, backdrop, floor, stair, stair_position, trap, t
             draw_screen(screen, game.maze, backdrop, floor, game.maze_size, game.cell_rect, stair, stair_position,
                              trap, trap_position, key, key_position, gate_sheet, gate, wall,
                              explorer, mummy_white, mummy_red, scorpion_white, scorpion_red)
-            pygame.time.delay(60)
+            pygame.time.delay(85)
             pygame.display.update()
     else:
         for i in range(8):
@@ -279,7 +279,7 @@ def gate_animation(screen, game, backdrop, floor, stair, stair_position, trap, t
             draw_screen(screen, game.maze, backdrop, floor, game.maze_size, game.cell_rect, stair, stair_position,
                         trap, trap_position, key, key_position, gate_sheet, gate, wall,
                         explorer, mummy_white, mummy_red, scorpion_white, scorpion_red)
-            pygame.time.delay(60)
+            pygame.time.delay(85)
             pygame.display.update()
 
 def determine_moving_direction(past_position, new_position):
@@ -417,5 +417,5 @@ def enemy_move_animation(mw_past_position, mw_new_position, mr_past_position, mr
         draw_screen(screen, game.maze, backdrop, floor, game.maze_size, game.cell_rect, stair, stair_position,
                     trap, trap_position, key, key_position, gate_sheet, gate, wall,
                     explorer, mummy_white, mummy_red, scorpion_white, scorpion_red)
-        pygame.time.delay(60)
+        pygame.time.delay(85)
         pygame.display.update()

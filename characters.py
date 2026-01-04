@@ -13,38 +13,34 @@ class character:
     def inboard(x, y) :
         return x > 1 and x <= len(maze) and y >= 1 and y <= len(maze)
     def eligible_character_move(self, maze, gate, x, y, new_x, new_y):
-        # 1. Kiểm tra biên (Boundaries)
         if not maze or len(maze) == 0: return False
-        if new_x < 0 or new_x >= len(maze) or new_y < 0 or new_y >= len(maze[0]):
-            return False
+        if new_x < 0 or new_x >= len(maze) or new_y < 0 or new_y >= len(maze[0]): return False
             
-        # 2. Kiểm tra ô đích có phải tường cứng không (đề phòng)
         if maze[new_x][new_y] == "%": return False
 
-        # 3. Tính toán vị trí "vật cản" nằm giữa bước đi
-        # Vì nhân vật đi bước 2 ô (stride = 2), vật cản (tường/cổng) sẽ nằm ở chính giữa
         mid_x = (x + new_x) // 2
         mid_y = (y + new_y) // 2
-        
-        # 4. Kiểm tra va chạm TƯỜNG (%)
-        if maze[mid_x][mid_y] == "%":
-            return False
+        if maze[mid_x][mid_y] == "%": return False
 
-        # 5. Kiểm tra va chạm CỔNG (Gate)
-        # Cách cũ: Chỉ check ký tự "G" (dễ lỗi nếu map sai)
-        # Cách mới: Check cả ký tự "G" HOẶC trùng khớp toạ độ gate_position
-        is_gate_symbol = (maze[mid_x][mid_y] == "G")
-        
-        # Kiểm tra toạ độ vật lý (Chuẩn xác 100%)
-        is_gate_coord = False
-        if gate and "gate_position" in gate:
-            if gate["gate_position"] == (mid_x, mid_y):
-                is_gate_coord = True
-        
-        # Nếu gặp cổng (theo ký tự hoặc toạ độ) VÀ cổng đang đóng -> CHẶN
-        if (is_gate_symbol or is_gate_coord) and gate["isClosed"]:
+        if gate and "gate_position" in gate and gate["isClosed"]:
+            gx, gy = gate["gate_position"]
+            
+
+            locked_row = (gx // 2) * 2 + 1
+            locked_col = (gy // 2) * 2 + 1
+            
+            if new_x == locked_row and new_y == locked_col:
+                print(f"BLOCK: Cannot ENTER the Gate Cell ({new_x}, {new_y})")
+                return False
+
+            if x == locked_row and y == locked_col:
+                print(f"BLOCK: Cannot EXIT the Gate Cell")
+                return False
+
+        cell_char = maze[mid_x][mid_y]
+        if (cell_char == "G" or (gate and gate.get("gate_position") == (mid_x, mid_y))) and gate["isClosed"]:
             return False
-                
+        
         return True
 
     def move_animation(self, x, y, screen, game, backdrop, floor, stair, stair_position, trap, trap_position,
@@ -108,7 +104,7 @@ class Explorer(character):
             graphics.draw_screen(screen, game.maze, backdrop, floor, game.maze_size, game.cell_rect, stair, stair_position,
                                 trap, trap_position, key, key_position, gate_sheet, gate, wall, \
                                 explorer, mummy_white, mummy_red, scorpion_white, scorpion_red)
-            pygame.time.delay(60)
+            pygame.time.delay(85)
             pygame.display.update()
 
 class enemy(character):

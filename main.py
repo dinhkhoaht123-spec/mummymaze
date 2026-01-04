@@ -1477,13 +1477,11 @@ def run_ai_solver(game, assets):
 # IN MAP TRÊN CONSOLE
 def print_map(game_obj, ex_char, mw_objs, mr_objs):
     try:
-        # 1. Lấy tọa độ Explorer (Object hoặc Dict)
         if hasattr(ex_char, 'x'):
             ex_pos = (ex_char.x, ex_char.y)
         else:
             ex_pos = (ex_char['x'], ex_char['y'])
         
-        # 2. Lấy tọa độ Mummy TRỰC TIẾP từ Object ( mw_objs chính là mummy_white_character )
         mw_coords = [(m.x, m.y) for m in mw_objs if m is not None]
         mr_coords = [(r.x, r.y) for r in mr_objs if r is not None]
 
@@ -1498,17 +1496,15 @@ def print_map(game_obj, ex_char, mw_objs, mr_objs):
                     row += "W "
                 elif p in mr_coords:
                     row += "R "
-                elif game_obj.gate and i == game_obj.gate[0] and j == game_obj.gate[1]:
-                    row += "S "
+                elif game_obj.gate and i == game_obj.gate["gate_position"][0] and j == game_obj.gate["gate_position"][1]:
+                    row += "G " 
                 else:
                     char = game_obj.maze[i][j]
                     row += (str(char) if char else " ") + " "
             
             print(row)
-            if "W" in row:
-                pass 
-                
-        # 2. PHẦN CHÚ THÍCH VÀ ĐỊA CHỈ (TỌA ĐỘ)
+
+        # 3. PHẦN CHÚ THÍCH
         print("-" * 30)
         print("📜 CHÚ THÍCH KÍ HIỆU & VỊ TRÍ HIỆN TẠI:")
         print(f"  [E] Explorer (Người chơi)   -> Địa chỉ: {ex_pos}")
@@ -1520,15 +1516,18 @@ def print_map(game_obj, ex_char, mw_objs, mr_objs):
             print(f"  [R] Red Mummy (Xác ướp đỏ)     -> Địa chỉ: {mr_coords}")
 
         if game_obj.gate:
-            print(f"  [S] Exit (Cửa thoát hiểm) ")
-        print(f"  [H] White Scorpion (Bọ cạp)   ")
-        print(f"  [D] Red Scorpion (Bọ cạp đỏ)  ")
+            status = "ĐÓNG" if game_obj.gate["isClosed"] else "MỞ"
+            print(f"  [G] Gate (Cổng thoát hiểm)      -> Trạng thái: {status}")
+            
         print("  [%] Wall (Tường đá) | [ ] Empty (Đường trống)")
         print("==="*15 + "\n")
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"Lỗi in map: {e}")
 #
+
 def rungame(layout, auth_manager=None, load_data=None):
     current_map = layout
     render = True
@@ -1938,7 +1937,26 @@ if __name__ == '__main__':
                     continue
             
             elif choice == "random":
-                # ... (Giữ nguyên logic random)
+                print("Generating New Random Map...")
+                # 1. Chọn kích thước ngẫu nhiên (6, 8 hoặc 10)
+                rand_size = random.choice([6, 8, 10])
+                
+                # 2. Gọi bộ sinh map
+                gen = MazeGenerator(rand_size)
+                map_data, agent_data = gen.generate()
+                
+                # 3. Ghi đè file map cũ (temp_random.txt) bằng dữ liệu mới
+                temp_map_path = os.path.join(maze_path, "temp_random.txt")
+                with open(temp_map_path, "w") as f:
+                    for row in map_data:
+                        f.write(row + "\n")
+                
+                # 4. Ghi đè file agent cũ (temp_random_agents.txt)
+                temp_agent_path = os.path.join(object_path, "temp_random_agents.txt")
+                with open(temp_agent_path, "w") as f:
+                    f.write(agent_data)
+                    
+                # 5. Gán layout để load file vừa tạo
                 layout = "temp_random.txt"
                 
             # --- SỬA ĐOẠN NÀY (Thay cho choice == "select") ---
